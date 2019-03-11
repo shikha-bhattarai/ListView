@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Homework3</string>
+    <string name="Search">Search</string>
+    <string name="searchBtn">Search</string>
+    <string name="buttonReset">Reset</string>
+    <string name="sortby">Sort By:</string>
+    <string name="price">Price</string>
+    <string name="date">Date</string>
+    <string name="trackView">Track:</string>
+    <string name="artistView">Artist:</string>
+    <string name="priceView">Price:</string>
+    <string name="dateView">Date:</string>
+</resources>
