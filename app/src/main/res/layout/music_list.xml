@@ -37,7 +37,7 @@
 
 
     <TextView
-        android:id="@+id/textViewPrice"
+        android:id="@+id/textViewTrackP"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewArtist"
@@ -57,9 +57,9 @@
         android:id="@+id/textViewDate"
         android:layout_width="101dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewPrice"
-        android:layout_alignParentStart="@id/textViewPrice"
-        android:layout_alignParentLeft="@id/textViewPrice"
+        android:layout_below="@id/textViewTrackP"
+        android:layout_alignParentStart="@id/textViewTrackP"
+        android:layout_alignParentLeft="@id/textViewTrackP"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="302dp"

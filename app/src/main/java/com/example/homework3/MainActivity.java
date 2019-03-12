@@ -2,6 +2,7 @@ package com.example.homework3;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -12,9 +13,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 
@@ -28,6 +34,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
     SeekBar counterSeekbar;
@@ -90,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         findViewById(R.id.resetbutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view){
@@ -122,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         protected ArrayList<MusicList> doInBackground(String... params) {
 
             HttpURLConnection connection = null;
-            ArrayList<MusicList> result = new ArrayList<>();
+            final ArrayList<MusicList> result = new ArrayList<>();
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -144,8 +154,25 @@ public class MainActivity extends AppCompatActivity {
                         musicList.trackPrice = newJson.getInt("trackPrice");
                         musicList.collectionPrice = newJson.getInt("collectionPrice");
                         musicList.releaseDate = newJson.getString("releaseDate");
+                        musicList.releaseDate=musicList.releaseDate.substring(0, 10);
+                        musicList.artworkUrl100 = newJson.getString("artworkUrl30");
                         result.add(musicList);
                     }
+                    Switch sw = (Switch) findViewById(R.id.switch1);
+                    sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) {
+                                Collections.sort(result, new Comparator<MusicList>() {
+                                    @Override
+                                    public int compare(MusicList t1, MusicList t2) {
+                                        return Integer.valueOf(t1.getTrackPrice()).compareTo(t2.getTrackPrice());
+                                    }
+                                });
+
+                            } else {
+                            }
+                        }
+                    });
                 ArrayList<MusicList> data = new ArrayList<>();
                     Log.d("array",result.toString());
                 }
@@ -162,29 +189,35 @@ public class MainActivity extends AppCompatActivity {
             }
             return result;
         }
-
         @Override
         protected void onPostExecute(ArrayList<MusicList> result) {
             items.clear();
-
             if (result.size() > 0) {
                 items.addAll(result);
-
-               displayMusicList();
+                displayMusicList(items);
             } else {
-                Log.d("demo", "empty result");
+                Log.d("Empty List", "empty result");
             }
         }
-        private void displayMusicList() {
-            mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-            mRecyclerView.setHasFixedSize(true);
-            mLayoutManager = new LinearLayoutManager(MainActivity.this);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            mAdapter = new MusicAdapter(items);
-            mRecyclerView.setAdapter(mAdapter);
 
 
-       }
+        private void displayMusicList(final ArrayList<MusicList> result) {
+            ListView listView = (ListView)findViewById(R.id.listView);
+            MusicAdapter adapter = new MusicAdapter(MainActivity.this, R.layout.music_list, result);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent i = new Intent(MainActivity.this, DisplayDetail.class);
+                    MusicList music = result.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("music", music);
+                    i.putExtra( "bundle" , bundle);
+                    startActivity(i);
+                }
+            });
+
+        }
     }
 }
 

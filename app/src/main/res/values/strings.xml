@@ -10,4 +10,5 @@
     <string name="artistView">Artist:</string>
     <string name="priceView">Price:</string>
     <string name="dateView">Date:</string>
+    <string name="finish">Finish</string>
 </resources>
