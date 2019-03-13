@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+/*Name: Shikha Bhattarai*/
 public class MainActivity extends AppCompatActivity {
     SeekBar counterSeekbar;
     SeekBar.OnSeekBarChangeListener seekListener;
@@ -83,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     builder = searchView.getQuery();
                     if (builder.toString().contains(" ")) {
                         input = builder.toString().replaceAll(" ", "+");
-                    }
-                    else{
+                    } else {
                         input = builder.toString();
                     }
                     ProgressDialog progress = new ProgressDialog(MainActivity.this);
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.resetbutton).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View view){
+            public void onClick(View view) {
                 counterSeekbar.resetPivot();
                 searchView.setQuery("", false);
                 searchView.clearFocus();
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class GetDataAsync extends AsyncTask<String, Void, ArrayList<MusicList>> {
         MusicList musicList;
+
         @Override
         protected ArrayList<MusicList> doInBackground(String... params) {
 
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     String json = IOUtils.toString(connection.getInputStream(), "UTF-8");
                     JSONObject root = new JSONObject(json);
                     JSONArray articles = root.getJSONArray("results");
-                    Log.d("articles",articles.getString(0));
+                    Log.d("articles", articles.getString(0));
                     for (int i = 0; i < articles.length(); i++) {
                         JSONObject newJson = articles.getJSONObject(i);
                         musicList = new MusicList();
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                         musicList.trackPrice = newJson.getInt("trackPrice");
                         musicList.collectionPrice = newJson.getInt("collectionPrice");
                         musicList.releaseDate = newJson.getString("releaseDate");
-                        musicList.releaseDate=musicList.releaseDate.substring(0, 10);
+                        musicList.releaseDate = musicList.releaseDate.substring(0, 10);
                         musicList.artworkUrl100 = newJson.getString("artworkUrl30");
                         result.add(musicList);
                     }
@@ -162,19 +162,21 @@ public class MainActivity extends AppCompatActivity {
                     sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
+
+                            } else {
                                 Collections.sort(result, new Comparator<MusicList>() {
                                     @Override
                                     public int compare(MusicList t1, MusicList t2) {
-                                        return Integer.valueOf(t1.getTrackPrice()).compareTo(t2.getTrackPrice());
+                                        if (t1.getTrackPrice() < t2.getTrackPrice()) return -1;
+                                        if (t1.getTrackPrice() > t2.getTrackPrice()) return 1;
+                                        else return 0;
                                     }
                                 });
-
-                            } else {
                             }
                         }
                     });
-                ArrayList<MusicList> data = new ArrayList<>();
-                    Log.d("array",result.toString());
+                    ArrayList<MusicList> data = new ArrayList<>();
+                    Log.d("array", result.toString());
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -189,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return result;
         }
+
         @Override
         protected void onPostExecute(ArrayList<MusicList> result) {
             items.clear();
@@ -202,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         private void displayMusicList(final ArrayList<MusicList> result) {
-            ListView listView = (ListView)findViewById(R.id.listView);
+            ListView listView = (ListView) findViewById(R.id.listView);
             MusicAdapter adapter = new MusicAdapter(MainActivity.this, R.layout.music_list, result);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -212,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                     MusicList music = result.get(position);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("music", music);
-                    i.putExtra( "bundle" , bundle);
+                    i.putExtra("bundle", bundle);
                     startActivity(i);
                 }
             });

@@ -55,6 +55,7 @@ public class MusicList implements Serializable {
         return convertedDate;
     }
 
+
     public String getArtistName() {
         return artistName;
     }
